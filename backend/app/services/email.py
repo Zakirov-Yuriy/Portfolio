@@ -1,74 +1,82 @@
 import logging
-from email.message import EmailMessage
 
-import aiosmtplib
+import httpx
 
 from app.config import get_settings
 from app.schemas import ContactRequest
 
 logger = logging.getLogger("portfolio.email")
 
-
-def _build_owner_message(data: ContactRequest, sender: str, owner: str) -> EmailMessage:
-    msg = EmailMessage()
-    msg["From"] = sender
-    msg["To"] = owner
-    msg["Reply-To"] = str(data.email)
-    msg["Subject"] = f"Новая заявка с портфолио — {data.name}"
-    msg.set_content(
-        "Новая заявка с лендинга:\n\n"
-        f"Имя:        {data.name}\n"
-        f"Телефон:    {data.phone}\n"
-        f"Email:      {data.email}\n\n"
-        f"Комментарий:\n{data.comment}\n"
-    )
-    return msg
+BREVO_URL = "https://api.brevo.com/v3/smtp/email"
 
 
-def _build_user_message(data: ContactRequest, sender: str) -> EmailMessage:
-    msg = EmailMessage()
-    msg["From"] = sender
-    msg["To"] = str(data.email)
-    msg["Subject"] = "Ваша заявка получена — Юрий Закиров"
-    msg.set_content(
-        f"Здравствуйте, {data.name}!\n\n"
-        "Спасибо за сообщение — оно получено, я свяжусь с вами в ближайшее время.\n\n"
-        "Копия вашей заявки:\n"
-        f"{data.comment}\n\n"
-        "—\nЮрий Закиров\nFullstack-разработчик"
-    )
-    return msg
+def _owner_payload(data: ContactRequest, sender: dict, owner: str) -> dict:
+    return {
+        "sender": sender,
+        "to": [{"email": owner}],
+        "replyTo": {"email": str(data.email), "name": data.name},
+        "subject": f"Новая заявка с портфолио — {data.name}",
+        "textContent": (
+            "Новая заявка с лендинга:\n\n"
+            f"Имя:        {data.name}\n"
+            f"Телефон:    {data.phone}\n"
+            f"Email:      {data.email}\n\n"
+            f"Комментарий:\n{data.comment}\n"
+        ),
+    }
 
 
-async def _send(messages: list[EmailMessage]) -> None:
-    settings = get_settings()
-    for msg in messages:
-        await aiosmtplib.send(
-            msg,
-            hostname=settings.smtp_host,
-            port=settings.smtp_port,
-            username=settings.smtp_user or None,
-            password=settings.smtp_password or None,
-            use_tls=settings.smtp_ssl,
-            start_tls=not settings.smtp_ssl,
-        )
+def _user_payload(data: ContactRequest, sender: dict) -> dict:
+    return {
+        "sender": sender,
+        "to": [{"email": str(data.email), "name": data.name}],
+        "subject": "Ваша заявка получена — Юрий Закиров",
+        "textContent": (
+            f"Здравствуйте, {data.name}!\n\n"
+            "Спасибо за сообщение — оно получено, я свяжусь с вами в ближайшее время.\n\n"
+            "Копия вашей заявки:\n"
+            f"{data.comment}\n\n"
+            "—\nЮрий Закиров\nFullstack-разработчик"
+        ),
+    }
+
+
+async def _send_via_brevo(api_key: str, payloads: list[dict]) -> None:
+    headers = {
+        "api-key": api_key,
+        "Content-Type": "application/json",
+        "accept": "application/json",
+    }
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        for payload in payloads:
+            response = await client.post(BREVO_URL, headers=headers, json=payload)
+            response.raise_for_status()
 
 
 async def send_contact_emails(data: ContactRequest) -> None:
-    """Отправляет письмо владельцу и копию пользователю.
+    """Отправляет письмо владельцу и копию пользователю через Brevo HTTP API.
 
-    Если SMTP не настроен (dry-run) — печатает письма в лог,
-    чтобы цикл формы можно было проверить без почтового сервера.
+    Если ключ Brevo не задан (dry-run) — печатает письма в лог,
+    чтобы цикл формы можно было проверить без почтового сервиса.
     """
     settings = get_settings()
-    owner_msg = _build_owner_message(data, settings.smtp_from, settings.owner_email)
-    user_msg = _build_user_message(data, settings.smtp_from)
+    sender = {"name": settings.brevo_sender_name, "email": settings.brevo_sender_email}
+    owner = _owner_payload(data, sender, settings.owner_email)
+    user = _user_payload(data, sender)
 
     if settings.email_dry_run:
-        logger.warning("SMTP не настроен — режим dry-run, письма не отправлены.")
-        logger.info("[DRY-RUN owner]\n%s", owner_msg.get_content())
-        logger.info("[DRY-RUN user]\n%s", user_msg.get_content())
+        logger.warning("BREVO_API_KEY не задан — режим dry-run, письма не отправлены.")
+        logger.info("[DRY-RUN owner -> %s]\n%s", settings.owner_email, owner["textContent"])
+        logger.info("[DRY-RUN user -> %s]\n%s", data.email, user["textContent"])
         return
 
-    await _send([owner_msg, user_msg])
-    logger.info("Письма отправлены: владельцу (%s) и пользователю (%s).", settings.owner_email, data.email)
+    try:
+        await _send_via_brevo(settings.brevo_api_key, [owner, user])
+    except httpx.HTTPStatusError as exc:
+        logger.error("Brevo вернул ошибку %s: %s", exc.response.status_code, exc.response.text[:300])
+        raise
+    except httpx.HTTPError as exc:
+        logger.error("Сетевая ошибка Brevo: %s", exc)
+        raise
+
+    logger.info("Письма отправлены через Brevo: владельцу (%s) и пользователю (%s).", settings.owner_email, data.email)

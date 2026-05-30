@@ -9,8 +9,13 @@ class Settings(BaseSettings):
     # CORS
     allowed_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
 
-    # Почта
-    owner_email: str = "zakirov.yuriy86@gmail.com"
+    # Почта (Brevo HTTP API — работает там, где хостинг режет SMTP-порты)
+    owner_email: str = "zakirov.yuriy86@gmail.com"      # куда приходят заявки
+    brevo_api_key: str = ""                              # ключ Brevo
+    brevo_sender_email: str = "zakirov.yuriy86@gmail.com"  # верифицированный отправитель
+    brevo_sender_name: str = "Юрий Закиров"
+
+    # SMTP оставлено для локальной отправки (на Render не используется)
     smtp_from: str = "zakirov.yuriy86@gmail.com"
     smtp_host: str = ""
     smtp_port: int = 465
@@ -18,7 +23,7 @@ class Settings(BaseSettings):
     smtp_password: str = ""
     smtp_ssl: bool = True
 
-    # LLM (OpenRouter вместо Claude)
+    # LLM (OpenRouter)
     openrouter_api_key: str = ""
     openrouter_api_key_backup: str = ""
     llm_model: str = "openai/gpt-oss-120b:free"
@@ -29,8 +34,8 @@ class Settings(BaseSettings):
 
     @property
     def email_dry_run(self) -> bool:
-        # Без SMTP-хоста письма не отправляются, а логируются.
-        return not self.smtp_host
+        # Нет ключа Brevo — письма не отправляются, а логируются.
+        return not self.brevo_api_key
 
 
 @lru_cache
