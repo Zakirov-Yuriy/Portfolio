@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -10,9 +11,9 @@ class Settings(BaseSettings):
     allowed_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
 
     # Почта (Brevo HTTP API — работает там, где хостинг режет SMTP-порты)
-    owner_email: str = "zakirov.yuriy86@gmail.com"      # куда приходят заявки
-    brevo_api_key: str = ""                              # ключ Brevo
-    brevo_sender_email: str = "zakirov.yuriy86@gmail.com"  # верифицированный отправитель
+    owner_email: str = "zakirov.yuriy86@gmail.com"          # куда приходят заявки
+    brevo_api_key: str = ""                                  # ключ Brevo
+    brevo_sender_email: str = "zakirov.yuriy86@gmail.com"    # верифицированный отправитель
     brevo_sender_name: str = "Юрий Закиров"
 
     # SMTP оставлено для локальной отправки (на Render не используется)
@@ -27,6 +28,13 @@ class Settings(BaseSettings):
     openrouter_api_key: str = ""
     openrouter_api_key_backup: str = ""
     llm_model: str = "openai/gpt-oss-120b:free"
+
+    @field_validator("*", mode="before")
+    @classmethod
+    def _strip_strings(cls, value: object) -> object:
+        # Срезаем пробелы и переводы строк у значений из окружения,
+        # чтобы случайный \n в ключе не ломал HTTP-заголовки.
+        return value.strip() if isinstance(value, str) else value
 
     @property
     def origins_list(self) -> list[str]:
