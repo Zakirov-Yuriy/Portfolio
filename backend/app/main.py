@@ -33,5 +33,5 @@ async def health() -> dict[str, object]:
     return {
         "status": "ok",
         "email_configured": not settings.email_dry_run,
-        "ai_configured": bool(settings.anthropic_api_key),
+        "ai_configured": bool(settings.openrouter_api_key or settings.openrouter_api_key_backup),
     }
