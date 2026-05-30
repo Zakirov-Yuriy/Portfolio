@@ -1,0 +1,98 @@
+.form {
+  &__wrap {
+    max-width: 640px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: clamp(22px, 4vw, 34px);
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  &__submit {
+    position: relative;
+    min-width: 150px;
+    justify-content: center;
+  }
+
+  &__status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    min-height: 22px;
+
+    &--success { color: var(--success); }
+    &--error { color: var(--error); }
+    &--loading { color: var(--text-muted); }
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 18px;
+
+  &__label {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  &__control {
+    font: inherit;
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    color: var(--text);
+    padding: 12px 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    resize: vertical;
+
+    &::placeholder { color: var(--text-faint); }
+
+    &:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    &.is-invalid {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px var(--error-bg);
+    }
+  }
+
+  &__error {
+    font-size: 0.8rem;
+    color: var(--error);
+    min-height: 1em;
+  }
+}
+
+// Спиннер в кнопке во время отправки
+.btn__spinner {
+  display: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(6, 33, 15, 0.35);
+  border-top-color: #06210f;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.form[data-state="loading"] {
+  .btn__label { opacity: 0.6; }
+  .btn__spinner { display: inline-block; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

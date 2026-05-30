@@ -1,0 +1,40 @@
+:root {
+  // Поверхности (тёмная IDE-тема)
+  --bg: #0d0f13;
+  --surface: #14171d;
+  --surface-2: #1a1e26;
+  --border: #262b34;
+  --border-strong: #343b47;
+
+  // Текст
+  --text: #e8eaef;
+  --text-muted: #98a0ad;
+  --text-faint: #6b7280;
+
+  // Акценты (подсветка как в редакторе кода)
+  --accent: #5ef2a0;
+  --accent-soft: rgba(94, 242, 160, 0.14);
+  --accent-strong: #34d98a;
+  --c-blue: #6ab0ff;
+  --c-purple: #c08cff;
+  --c-amber: #ffb066;
+
+  // Семантика
+  --success: #5ef2a0;
+  --error: #ff7a7a;
+  --success-bg: rgba(94, 242, 160, 0.12);
+  --error-bg: rgba(255, 122, 122, 0.12);
+
+  // Типографика
+  --font-sans: "Sora", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  // Геометрия
+  --radius: 10px;
+  --radius-lg: 16px;
+  --maxw: 1080px;
+  --gap: 24px;
+
+  // Тайминги
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
