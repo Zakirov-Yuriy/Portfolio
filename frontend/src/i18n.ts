@@ -31,19 +31,19 @@ const dictionaries: Record<Lang, Dict> = {
     "hero.cta_contact": "Связаться",
     "hero.cta_ai": "Спросить AI про опыт",
     // stack
-    "stack.label": "// 01 — стек и направления",
+    "stack.label": "// 01 - стек и направления",
     "stack.title": "Чем работаю",
     // approach
-    "approach.label": "// 02 — как работаю",
+    "approach.label": "// 02 - как работаю",
     "approach.title": "Подход к задачам и AI",
     // cases
-    "cases.label": "// 03 — кейсы и опыт",
+    "cases.label": "// 03 - кейсы и опыт",
     "cases.title": "Что делал лично",
     // ai chat
-    "chat.label": "// 04 — ai-интеграция",
+    "chat.label": "// 04 - ai-интеграция",
     "chat.title": "Спросите AI про мой опыт",
-    "chat.lead":
-      "Чат отправляет запрос на эндпоинт FastAPI, тот обращается к LLM с моим профилем в system prompt и возвращает ответ.",
+    // "chat.lead":
+    //   "Чат отправляет запрос на эндпоинт FastAPI, тот обращается к LLM с моим профилем в system prompt и возвращает ответ.",
     "chat.placeholder": "Спросите про мой опыт…",
     "chat.input_aria": "Сообщение AI-ассистенту",
     "chat.send_aria": "Отправить",
@@ -54,10 +54,10 @@ const dictionaries: Record<Lang, Dict> = {
     "chat.suggestion_2": "Расскажи про интеграции с LLM",
     "chat.suggestion_3": "Что делал на Flutter?",
     // contact form
-    "contact.label": "// 05 — контакты",
+    "contact.label": "// 05 - контакты",
     "contact.title": "Напишите мне",
     "contact.lead":
-      "Письмо придёт мне, а копия — вам на указанный email. Все состояния обрабатываются: загрузка, успех, ошибка.",
+      "Письмо придёт мне, а копия - вам на указанный email.",
     "field.name": "Имя",
     "field.name_ph": "Как к вам обращаться",
     "field.phone": "Телефон",
@@ -99,19 +99,19 @@ const dictionaries: Record<Lang, Dict> = {
     "hero.cta_contact": "Get in touch",
     "hero.cta_ai": "Ask AI about my experience",
     // stack
-    "stack.label": "// 01 — stack & focus",
+    "stack.label": "// 01 - stack & focus",
     "stack.title": "What I work with",
     // approach
-    "approach.label": "// 02 — how I work",
+    "approach.label": "// 02 - how I work",
     "approach.title": "Approach to tasks & AI",
     // cases
-    "cases.label": "// 03 — cases & experience",
+    "cases.label": "// 03 - cases & experience",
     "cases.title": "What I did myself",
     // ai chat
-    "chat.label": "// 04 — ai integration",
+    "chat.label": "// 04 - ai integration",
     "chat.title": "Ask AI about my experience",
-    "chat.lead":
-      "The chat sends a request to a FastAPI endpoint, which calls an LLM with my profile in the system prompt and returns the answer.",
+    // "chat.lead":
+    //   "The chat sends a request to a FastAPI endpoint, which calls an LLM with my profile in the system prompt and returns the answer.",
     "chat.placeholder": "Ask about my experience…",
     "chat.input_aria": "Message to the AI assistant",
     "chat.send_aria": "Send",
@@ -122,10 +122,10 @@ const dictionaries: Record<Lang, Dict> = {
     "chat.suggestion_2": "Tell me about LLM integrations",
     "chat.suggestion_3": "What did you build with Flutter?",
     // contact form
-    "contact.label": "// 05 — contacts",
+    "contact.label": "// 05 - contacts",
     "contact.title": "Write to me",
     "contact.lead":
-      "The message goes to me, with a copy to the email you provide. Every state is handled: loading, success, error.",
+      "The message goes to me, with a copy to the email you provide.",
     "field.name": "Name",
     "field.name_ph": "How should I address you",
     "field.phone": "Phone",
