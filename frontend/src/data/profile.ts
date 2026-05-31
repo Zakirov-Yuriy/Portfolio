@@ -90,7 +90,7 @@ export const profile: Profile = {
 
   contacts: [
     { label: "Телефон", value: "+7 (925) 449-95-50", href: "tel:+79254499550", icon: "phone" },
-    { label: "Email", value: "freezar@mail.ru", href: "mailto:freezar@mail.ru", icon: "mail" },
+    { label: "Email", value: "zakirov.yuriy86@gmail.com", href: "mailto:zakirov.yuriy86@gmail.com", icon: "mail" },
     { label: "Telegram", value: "@Zak_Yuri", href: "https://t.me/Zak_Yuri", icon: "telegram" },
     { label: "GitHub", value: "Zakirov-Yuriy", href: "https://github.com/Zakirov-Yuriy", icon: "github" },
   ],
