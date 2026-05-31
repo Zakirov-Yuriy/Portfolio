@@ -88,7 +88,7 @@ export function AiChat(): HTMLElement {
   const section = el("section", { class: "section container", id: "assistant" }, [
     el("p", { class: "section-label" }, [t("chat.label")]),
     el("h2", { class: "section-title" }, [t("chat.title")]),
-    el("p", { class: "section-lead" }, [t("chat.lead")]),
+    // el("p", { class: "section-lead" }, [t("chat.lead")]),
     el("div", { class: "chat" }, [messages, chips, el("div", { class: "chat__bar" }, [input, sendBtn])]),
   ]);
 
