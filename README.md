@@ -7,6 +7,8 @@
 **API (health):** https://portfolio-api-1mu0.onrender.com/api/health
 **Репозиторий:** https://github.com/Zakirov-Yuriy/Portfolio
 
+![Скриншот лендинга](assets/screenshot.png)
+
 ## Стек
 
 | Слой | Технологии |
