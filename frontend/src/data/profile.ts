@@ -61,6 +61,11 @@ export const profile: Profile = {
         "Clean Architecture + BLoC для 8+ доменов",
         "Проектирование контрактов API с backend-командой (OpenAPI/Swagger)",
       ],
+      links: [
+        { label: "Сайт", href: "https://lidle.io/ru", icon: "external" },
+        { label: "RuStore", href: "https://www.rustore.ru/catalog/app/io.lidle.app", icon: "external" },
+        { label: "Репозиторий", href: "https://github.com/Zakirov-Yuriy/Lidle", icon: "github" },
+      ],
     },
     {
       title: "AI Assistant Platform",
