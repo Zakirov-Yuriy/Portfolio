@@ -1,3 +1,5 @@
+import { t } from "../i18n";
+
 export interface ContactValues {
   name: string;
   phone: string;
@@ -15,20 +17,20 @@ export function validateContact(values: ContactValues): FieldErrors {
   const errors: FieldErrors = {};
 
   if (values.name.trim().length < 2) {
-    errors.name = "Укажите имя (минимум 2 символа)";
+    errors.name = t("valid.name");
   }
 
   const digits = values.phone.match(PHONE_DIGITS_RE)?.length ?? 0;
   if (digits < 10) {
-    errors.phone = "Введите корректный телефон";
+    errors.phone = t("valid.phone");
   }
 
   if (!EMAIL_RE.test(values.email.trim())) {
-    errors.email = "Введите корректный email";
+    errors.email = t("valid.email");
   }
 
   if (values.comment.trim().length < 5) {
-    errors.comment = "Напишите чуть подробнее (минимум 5 символов)";
+    errors.comment = t("valid.comment");
   }
 
   return errors;

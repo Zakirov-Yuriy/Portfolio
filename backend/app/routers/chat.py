@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api", tags=["chat"])
 @router.post("/chat", response_model=ChatResponse)
 async def chat(payload: ChatRequest) -> ChatResponse:
     try:
-        reply = await answer_about_experience(payload.message, payload.history)
+        reply = await answer_about_experience(payload.message, payload.history, payload.lang)
     except Exception as exc:  # noqa: BLE001
         logger.exception("Ошибка AI-чата: %s", exc)
         raise HTTPException(

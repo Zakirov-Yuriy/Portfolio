@@ -1,20 +1,21 @@
 import { el, icon } from "../utils/dom";
 import { sendContact, ApiError } from "../api/client";
 import { validateContact, hasErrors, type ContactValues, type FieldErrors } from "../utils/validation";
+import { t } from "../i18n";
 
 interface FieldSpec {
   name: keyof ContactValues;
-  label: string;
+  labelKey: string;
   type: string;
-  placeholder: string;
+  placeholderKey: string;
   multiline?: boolean;
 }
 
 const FIELDS: FieldSpec[] = [
-  { name: "name", label: "Имя", type: "text", placeholder: "Как к вам обращаться" },
-  { name: "phone", label: "Телефон", type: "tel", placeholder: "+7 ___ ___ __ __" },
-  { name: "email", label: "Email", type: "email", placeholder: "you@example.com" },
-  { name: "comment", label: "Комментарий", type: "text", placeholder: "Коротко о задаче или вопросе", multiline: true },
+  { name: "name", labelKey: "field.name", type: "text", placeholderKey: "field.name_ph" },
+  { name: "phone", labelKey: "field.phone", type: "tel", placeholderKey: "field.phone_ph" },
+  { name: "email", labelKey: "field.email", type: "email", placeholderKey: "field.email_ph" },
+  { name: "comment", labelKey: "field.comment", type: "text", placeholderKey: "field.comment_ph", multiline: true },
 ];
 
 export function ContactForm(): HTMLElement {
@@ -22,9 +23,10 @@ export function ContactForm(): HTMLElement {
   const errorNodes = new Map<keyof ContactValues, HTMLElement>();
 
   const fieldNodes = FIELDS.map((spec) => {
+    const placeholder = t(spec.placeholderKey);
     const field = spec.multiline
-      ? el("textarea", { id: `f-${spec.name}`, class: "field__control", placeholder: spec.placeholder, rows: "4" })
-      : el("input", { id: `f-${spec.name}`, class: "field__control", type: spec.type, placeholder: spec.placeholder });
+      ? el("textarea", { id: `f-${spec.name}`, class: "field__control", placeholder, rows: "4" })
+      : el("input", { id: `f-${spec.name}`, class: "field__control", type: spec.type, placeholder });
     const error = el("span", { class: "field__error", "aria-live": "polite" });
     inputs.set(spec.name, field as HTMLInputElement);
     errorNodes.set(spec.name, error);
@@ -35,7 +37,7 @@ export function ContactForm(): HTMLElement {
     });
 
     return el("div", { class: "field" }, [
-      el("label", { class: "field__label", for: `f-${spec.name}` }, [spec.label]),
+      el("label", { class: "field__label", for: `f-${spec.name}` }, [t(spec.labelKey)]),
       field,
       error,
     ]);
@@ -43,7 +45,7 @@ export function ContactForm(): HTMLElement {
 
   const status = el("p", { class: "form__status", role: "status", "aria-live": "polite" });
   const submit = el("button", { class: "btn btn--primary form__submit", type: "submit" }, [
-    el("span", { class: "btn__label" }, ["Отправить"]),
+    el("span", { class: "btn__label" }, [t("form.submit")]),
     el("span", { class: "btn__spinner", "aria-hidden": "true" }),
   ]);
 
@@ -93,28 +95,26 @@ export function ContactForm(): HTMLElement {
     showErrors(errors);
 
     if (hasErrors(errors)) {
-      setState("error", "Проверьте поля формы.");
+      setState("error", t("form.invalid"));
       return;
     }
 
-    setState("loading", "Отправляю…");
+    setState("loading", t("form.sending"));
 
     try {
       const result = await sendContact(values);
-      setState("success", result.message || "Готово! Письмо отправлено, копия — вам на почту.");
+      setState("success", result.message || t("form.success"));
       form.reset();
     } catch (err) {
-      const message = err instanceof ApiError ? err.message : "Не удалось отправить. Попробуйте позже.";
+      const message = err instanceof ApiError ? err.message : t("form.error_generic");
       setState("error", message);
     }
   });
 
   return el("section", { class: "section container", id: "contact" }, [
-    el("p", { class: "section-label" }, ["// 05 — контакты"]),
-    el("h2", { class: "section-title" }, ["Напишите мне"]),
-    el("p", { class: "section-lead" }, [
-      "Письмо придёт мне, а копия — вам на указанный email. Все состояния обрабатываются: загрузка, успех, ошибка.",
-    ]),
+    el("p", { class: "section-label" }, [t("contact.label")]),
+    el("h2", { class: "section-title" }, [t("contact.title")]),
+    el("p", { class: "section-lead" }, [t("contact.lead")]),
     el("div", { class: "form__wrap" }, [form]),
   ]);
 }

@@ -53,6 +53,24 @@
     }
   }
 
+  &__lang {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 6px 11px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+
+    &:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+  }
+
   @media (max-width: 640px) {
     &__links a:not(.nav__cta) {
       display: none;

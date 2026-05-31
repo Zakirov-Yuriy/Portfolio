@@ -5,13 +5,8 @@ from app.schemas import ChatMessage
 
 logger = logging.getLogger("portfolio.llm")
 
-# Профиль Юрия — фактическая база для ответов ассистента (из резюме).
-PROFILE_CONTEXT = """\
-Ты — AI-ассистент на портфолио разработчика Юрия Закирова. Отвечай о его \
-профессиональном опыте: дружелюбно, по делу, на русском, 2–4 предложениями. \
-Не выдумывай факты сверх профиля. На вопросы не по теме опыта вежливо возвращай \
-разговор к профессиональным темам.
-
+# Фактическая база для ответов ассистента (из резюме). Язык ответа задаётся отдельно.
+PROFILE_FACTS = """\
 ПРОФИЛЬ ЮРИЯ ЗАКИРОВА:
 - Роль: Fullstack-разработчик. Python backend + клиент (Flutter) + AI-интеграции. 4+ года опыта.
 - Backend: Python 3.11, FastAPI, Django/DRF, Flask. asyncio, httpx. PostgreSQL (схемы, индексы, \
@@ -34,20 +29,55 @@ endpoint обработки заказов (-15% времени отклика),
 Pydantic); явная обработка ошибок; критичную логику покрывает pytest. Английский B1.
 """
 
-UNAVAILABLE_REPLY = (
-    "AI-ассистент сейчас недоступен: на сервере не настроен ключ API. "
-    "Но я с радостью отвечу лично — напишите в форме ниже."
-)
+# Инструкция ассистенту — на нужном языке.
+INSTRUCTIONS = {
+    "ru": (
+        "Ты — AI-ассистент на портфолио разработчика Юрия Закирова. Отвечай о его "
+        "профессиональном опыте: дружелюбно, по делу, на русском, 2–4 предложениями. "
+        "Не выдумывай факты сверх профиля. На вопросы не по теме опыта вежливо возвращай "
+        "разговор к профессиональным темам."
+    ),
+    "en": (
+        "You are an AI assistant on developer Yuriy Zakirov's portfolio. Answer about his "
+        "professional experience: friendly, to the point, in English, in 2–4 sentences. "
+        "Do not invent facts beyond the profile. For off-topic questions, politely steer the "
+        "conversation back to professional topics."
+    ),
+}
+
+UNAVAILABLE_REPLY = {
+    "ru": (
+        "AI-ассистент сейчас недоступен: на сервере не настроен ключ API. "
+        "Но я с радостью отвечу лично — напишите в форме ниже."
+    ),
+    "en": (
+        "The AI assistant is unavailable right now: no API key is configured on the server. "
+        "But I'm happy to reply in person — drop me a message in the form below."
+    ),
+}
+
+FALLBACK_REPLY = {
+    "ru": "Не смог сформировать ответ, попробуйте переформулировать.",
+    "en": "I couldn't form an answer, please try rephrasing.",
+}
 
 
-async def answer_about_experience(message: str, history: list[ChatMessage]) -> str:
+def _system_prompt(lang: str) -> str:
+    instruction = INSTRUCTIONS.get(lang, INSTRUCTIONS["ru"])
+    return f"{instruction}\n\n{PROFILE_FACTS}"
+
+
+async def answer_about_experience(
+    message: str, history: list[ChatMessage], lang: str = "ru"
+) -> str:
+    lang = lang if lang in INSTRUCTIONS else "ru"
     settings = get_settings()
-    
+
     # Используем основной или резервный ключ OpenRouter
     api_key = settings.openrouter_api_key or settings.openrouter_api_key_backup
     if not api_key:
         logger.warning("OpenRouter API ключи не заданы — возвращаю заглушку.")
-        return UNAVAILABLE_REPLY
+        return UNAVAILABLE_REPLY[lang]
 
     messages = [{"role": m.role, "content": m.content} for m in history]
     messages.append({"role": "user", "content": message})
@@ -64,7 +94,7 @@ async def answer_about_experience(message: str, history: list[ChatMessage]) -> s
                 json={
                     "model": settings.llm_model,
                     "messages": [
-                        {"role": "system", "content": PROFILE_CONTEXT},
+                        {"role": "system", "content": _system_prompt(lang)},
                         *messages,
                     ],
                     "max_tokens": 400,
@@ -74,7 +104,7 @@ async def answer_about_experience(message: str, history: list[ChatMessage]) -> s
             )
             response.raise_for_status()
             result = response.json()
-            
+
     except httpx.HTTPError as exc:
         logger.error("OpenRouter API ошибка: %s", exc)
         raise
@@ -82,6 +112,6 @@ async def answer_about_experience(message: str, history: list[ChatMessage]) -> s
     # Извлекаем текст ответа из OpenRouter
     if "choices" in result and len(result["choices"]) > 0:
         content = result["choices"][0].get("message", {}).get("content", "")
-        return content.strip() or "Не смог сформировать ответ, попробуйте переформулировать."
-    
-    return "Не смог сформировать ответ, попробуйте переформулировать."
+        return content.strip() or FALLBACK_REPLY[lang]
+
+    return FALLBACK_REPLY[lang]

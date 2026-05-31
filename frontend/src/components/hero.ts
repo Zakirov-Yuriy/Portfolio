@@ -1,9 +1,11 @@
 import { el, icon } from "../utils/dom";
-import { profile } from "../data/profile";
+import { getProfile } from "../data/profile";
+import { t } from "../i18n";
 
 export function Hero(): HTMLElement {
+  const profile = getProfile();
   return el("section", { class: "hero container", id: "top" }, [
-    el("p", { class: "section-label reveal" }, ["// привет, я"]),
+    el("p", { class: "section-label reveal" }, [t("hero.greeting")]),
     el("h1", { class: "hero__name reveal", "data-delay": "1" }, [profile.name]),
     el("p", { class: "hero__title reveal", "data-delay": "2" }, [
       el("span", { class: "hero__role" }, [profile.title]),
@@ -14,11 +16,11 @@ export function Hero(): HTMLElement {
     el("div", { class: "hero__actions reveal", "data-delay": "4" }, [
       el("a", { class: "btn btn--primary", href: "#contact" }, [
         el("span", { html: icon("mail", 18) }),
-        el("span", {}, ["Связаться"]),
+        el("span", {}, [t("hero.cta_contact")]),
       ]),
       el("a", { class: "btn", href: "#assistant" }, [
         el("span", { html: icon("robot", 18) }),
-        el("span", {}, ["Спросить AI про опыт"]),
+        el("span", {}, [t("hero.cta_ai")]),
       ]),
     ]),
   ]);

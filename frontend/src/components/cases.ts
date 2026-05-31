@@ -1,7 +1,9 @@
 import { el, icon } from "../utils/dom";
-import { profile } from "../data/profile";
+import { getProfile } from "../data/profile";
+import { t } from "../i18n";
 
 export function Cases(): HTMLElement {
+  const profile = getProfile();
   const cards = profile.cases.map((item) => {
     const children: (Node | string)[] = [
       el("div", { class: "case__head" }, [
@@ -17,7 +19,7 @@ export function Cases(): HTMLElement {
       el(
         "ul",
         { class: "case__tags" },
-        item.tags.map((t) => el("li", { class: "tag" }, [t]))
+        item.tags.map((tag) => el("li", { class: "tag" }, [tag]))
       ),
     ];
 
@@ -43,8 +45,8 @@ export function Cases(): HTMLElement {
   });
 
   return el("section", { class: "section container", id: "cases" }, [
-    el("p", { class: "section-label" }, ["// 03 — кейсы и опыт"]),
-    el("h2", { class: "section-title" }, ["Что делал лично"]),
+    el("p", { class: "section-label" }, [t("cases.label")]),
+    el("h2", { class: "section-title" }, [t("cases.title")]),
     el("div", { class: "cases__grid" }, cards),
   ]);
 }

@@ -1,7 +1,9 @@
 import { el, icon } from "../utils/dom";
-import { profile } from "../data/profile";
+import { getProfile } from "../data/profile";
+import { t } from "../i18n";
 
 export function Approach(): HTMLElement {
+  const profile = getProfile();
   const cards = profile.approach.map((card) =>
     el("article", { class: "approach__card" }, [
       el("div", { class: "approach__icon", html: icon(card.icon, 22) }),
@@ -11,8 +13,8 @@ export function Approach(): HTMLElement {
   );
 
   return el("section", { class: "section container", id: "work" }, [
-    el("p", { class: "section-label" }, ["// 02 — как работаю"]),
-    el("h2", { class: "section-title" }, ["Подход к задачам и AI"]),
+    el("p", { class: "section-label" }, [t("approach.label")]),
+    el("h2", { class: "section-title" }, [t("approach.title")]),
     el("div", { class: "approach__grid" }, cards),
   ]);
 }

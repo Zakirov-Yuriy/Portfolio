@@ -1,27 +1,24 @@
 import { el, icon } from "../utils/dom";
 import { sendChat, ApiError, type ChatMessage } from "../api/client";
-
-const SUGGESTIONS = [
-  "Какой опыт с async Python?",
-  "Расскажи про интеграции с LLM",
-  "Что делал на Flutter?",
-];
+import { t } from "../i18n";
 
 export function AiChat(): HTMLElement {
   const history: ChatMessage[] = [];
   let busy = false;
 
+  const suggestions = [t("chat.suggestion_1"), t("chat.suggestion_2"), t("chat.suggestion_3")];
+
   const messages = el("div", { class: "chat__messages", "aria-live": "polite" });
   const input = el("input", {
     class: "chat__input",
     type: "text",
-    placeholder: "Спросите про мой опыт…",
-    "aria-label": "Сообщение AI-ассистенту",
+    placeholder: t("chat.placeholder"),
+    "aria-label": t("chat.input_aria"),
   });
   const sendBtn = el("button", {
     class: "chat__send",
     type: "button",
-    "aria-label": "Отправить",
+    "aria-label": t("chat.send_aria"),
     html: icon("send", 18),
   });
 
@@ -62,7 +59,7 @@ export function AiChat(): HTMLElement {
       history.push({ role: "user", content: message }, { role: "assistant", content: reply });
     } catch (err) {
       typing.remove();
-      const text = err instanceof ApiError ? err.message : "Что-то пошло не так. Попробуйте позже.";
+      const text = err instanceof ApiError ? err.message : t("chat.error_generic");
       const errBubble = addBubble("assistant", text);
       errBubble.classList.add("chat__bubble--error");
     } finally {
@@ -79,7 +76,7 @@ export function AiChat(): HTMLElement {
   const chips = el(
     "div",
     { class: "chat__suggestions" },
-    SUGGESTIONS.map((s) =>
+    suggestions.map((s) =>
       el("button", { class: "chat__suggestion", type: "button" }, [s])
     )
   );
@@ -89,20 +86,15 @@ export function AiChat(): HTMLElement {
   });
 
   const section = el("section", { class: "section container", id: "assistant" }, [
-    el("p", { class: "section-label" }, ["// 04 — ai-интеграция"]),
-    el("h2", { class: "section-title" }, ["Спросите AI про мой опыт"]),
-    el("p", { class: "section-lead" }, [
-      "Чат отправляет запрос на эндпоинт FastAPI, тот обращается к LLM с моим профилем в system prompt и возвращает ответ.",
-    ]),
+    el("p", { class: "section-label" }, [t("chat.label")]),
+    el("h2", { class: "section-title" }, [t("chat.title")]),
+    el("p", { class: "section-lead" }, [t("chat.lead")]),
     el("div", { class: "chat" }, [messages, chips, el("div", { class: "chat__bar" }, [input, sendBtn])]),
   ]);
 
   // Приветственный пузырёк.
   queueMicrotask(() => {
-    addBubble(
-      "assistant",
-      "Привет! Я AI-ассистент Юрия. Спросите — расскажу про его стек, проекты и подход к работе."
-    );
+    addBubble("assistant", t("chat.welcome"));
   });
 
   return section;

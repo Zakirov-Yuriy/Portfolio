@@ -1,4 +1,5 @@
 import type { ContactValues } from "../utils/validation";
+import { t, getLang } from "../i18n";
 
 // База берётся из env; пусто = относительный путь (Vite-прокси в dev / rewrite в проде).
 const BASE = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
@@ -31,17 +32,17 @@ async function request<T>(path: string, { body, timeoutMs = 15000 }: RequestOpti
 
     if (!res.ok) {
       const detail =
-        (data && (data.detail || data.message)) || `Ошибка сервера (${res.status})`;
-      throw new ApiError(typeof detail === "string" ? detail : "Не удалось обработать запрос", res.status);
+        (data && (data.detail || data.message)) || `${t("api.server_error")} (${res.status})`;
+      throw new ApiError(typeof detail === "string" ? detail : t("api.bad_request"), res.status);
     }
 
     return data as T;
   } catch (err) {
     if (err instanceof ApiError) throw err;
     if (err instanceof DOMException && err.name === "AbortError") {
-      throw new ApiError("Превышено время ожидания. Попробуйте ещё раз.");
+      throw new ApiError(t("api.timeout"));
     }
-    throw new ApiError("Нет связи с сервером. Проверьте подключение.");
+    throw new ApiError(t("api.offline"));
   } finally {
     clearTimeout(timer);
   }
@@ -66,5 +67,6 @@ export interface ChatResult {
 }
 
 export function sendChat(message: string, history: ChatMessage[]): Promise<ChatResult> {
-  return request<ChatResult>("/api/chat", { body: { message, history }, timeoutMs: 30000 });
+  // lang передаём на бэкенд, чтобы ассистент отвечал на языке интерфейса.
+  return request<ChatResult>("/api/chat", { body: { message, history, lang: getLang() }, timeoutMs: 30000 });
 }
