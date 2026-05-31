@@ -75,6 +75,52 @@ export const profile: Profile = {
       ],
     },
     {
+      title: "XFF-Trust-Chain",
+      role: "DevOps · Nginx + Docker",
+      description:
+        "Стенд на docker-compose: цепочка из трёх Nginx reverse proxy перед Python-приложением с корректной сборкой X-Forwarded-For и защитой от подделки заголовка клиентом.",
+      tags: ["Docker", "Nginx", "Python", "Bash", "Security"],
+      highlights: [
+        "Доверие определяется по $remote_addr TCP-соединения, а не по содержимому заголовка",
+        "geo + map с точечным списком доверенных IP, чтобы docker-шлюз не считался доверенным",
+        "Протокол проверки на curl: 8 сценариев, включая защиту от spoof XFF",
+      ],
+      links: [
+        { label: "Репозиторий", href: "https://github.com/Zakirov-Yuriy/XFF-Trust-Chain", icon: "github" },
+      ],
+    },
+    {
+      title: "ChatGPT App",
+      role: "React + Express · LLM",
+      description:
+        "Веб-чат с LLM: React-фронтенд и Express-бэкенд через OpenRouter, с голосовым вводом на нативном Web Speech API.",
+      tags: ["React 19", "Vite", "Tailwind", "Express", "OpenRouter"],
+      highlights: [
+        "Голосовой ввод с автоотправкой текста после окончания диктовки",
+        "Явная обработка ошибок на всех этапах и индикатор загрузки",
+        "Деплой: Vercel (фронт) + Render (бэк)",
+      ],
+      links: [
+        { label: "Демо", href: "https://chatgpt-app-six-eta.vercel.app", icon: "external" },
+        { label: "Репозиторий", href: "https://github.com/Zakirov-Yuriy/Chatgpt-app", icon: "github" },
+      ],
+    },
+    {
+      title: "hh_auto_apply",
+      role: "Python · автоматизация + AI",
+      description:
+        "Скрипт автооткликов на вакансии hh.ru: Playwright управляет браузером, SQLite исключает повторы, AI генерирует персональное сопроводительное письмо под каждую вакансию.",
+      tags: ["Python", "Playwright", "SQLite", "OpenRouter", "pytest"],
+      highlights: [
+        "Clean Architecture: слои domain / application / infrastructure / cli",
+        "AI-письма под описание конкретной вакансии через OpenRouter",
+        "Безопасный dry-run, отчёты в CSV, покрытие тестами на pytest",
+      ],
+      links: [
+        { label: "Репозиторий", href: "https://github.com/Zakirov-Yuriy/hh_auto_apply", icon: "github" },
+      ],
+    },
+    {
       title: "Pet-проект: этот лендинг",
       role: "Fullstack + AI",
       description:

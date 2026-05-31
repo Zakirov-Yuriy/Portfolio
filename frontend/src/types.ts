@@ -11,12 +11,19 @@ export interface ApproachCard {
   text: string;
 }
 
+export interface CaseLink {
+  label: string;
+  href: string;
+  icon?: string; // имя иконки из набора в utils/dom.ts
+}
+
 export interface CaseItem {
   title: string;
   role: string;
   description: string;
   tags: string[];
   highlights: string[];
+  links?: CaseLink[];
 }
 
 export interface ContactLink {

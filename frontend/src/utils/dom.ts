@@ -43,6 +43,8 @@ const ICONS: Record<string, string> = {
     '<rect x="4" y="8" width="16" height="11" rx="2"/><path d="M12 8V5M9 13h.01M15 13h.01M9 16h6"/><circle cx="12" cy="4" r="1"/>',
   send: '<path d="M4 12l16-7-7 16-2-7z"/>',
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  external:
+    '<path d="M14 5h5v5"/><path d="M19 5l-7 7"/><path d="M19 13v4a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4"/>',
 };
 
 export function icon(name: string, size = 20): string {
