@@ -78,6 +78,9 @@ export const profile: Profile = {
         "Очереди с учётом rate-limit, экспоненциальные ретраи, таймауты",
         "Кэширование повторяющихся промптов — экономия на LLM-запросах",
       ],
+      links: [
+        { label: "Репозиторий", href: "https://github.com/Zakirov-Yuriy/Bot_WiseVoiceAI_2.0", icon: "github" },
+      ],
     },
     {
       title: "XFF-Trust-Chain",
@@ -135,6 +138,10 @@ export const profile: Profile = {
         "Полный цикл: frontend → API → обработка ошибок → результат",
         "Письмо владельцу + копия пользователю",
         "AI-ассистент на эндпоинте FastAPI",
+      ],
+      links: [
+        { label: "Сайт", href: "https://portfolio-eight-rouge-59.vercel.app/#about", icon: "external" },
+        { label: "Репозиторий", href: "https://github.com/Zakirov-Yuriy/Portfolio", icon: "github" },
       ],
     },
   ],
